@@ -113,7 +113,7 @@ class CodeWarsTest {
 
         //Act
         int result = CodeWars.mathematics(a,b);
-        
+
         //Assert
         assertThat(result, equalTo(expected));
     }
