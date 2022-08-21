@@ -1,4 +1,4 @@
-package mock;
+package mock.sender;
 
 import mock.entity.Country;
 import mock.entity.Location;
@@ -11,20 +11,10 @@ import org.mockito.Mockito;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GeoServiceTest {
+public class MessageSenderImplTest {
 
     static GeoService geoService;
     static LocalizationService localizationService;
-
-    @BeforeAll
-    static void beforeAll() {
-        System.out.println("@BeforeAll started");
-    }
-
-    @AfterAll
-    static void afterAll() {
-        System.out.println("AfterAll started");
-    }
 
     @BeforeEach
     void beforeEach() {

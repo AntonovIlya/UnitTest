@@ -1,4 +1,4 @@
-package mock;
+package mock.geo;
 
 import mock.entity.Country;
 import mock.entity.Location;
@@ -15,16 +15,6 @@ import java.util.stream.Stream;
 public class GepServiceImplTest {
 
     static GeoServiceImpl geoService;
-
-    @BeforeAll
-    static void beforeAll() {
-        System.out.println("@BeforeAll started");
-    }
-
-    @AfterAll
-    static void afterAll() {
-        System.out.println("AfterAll started");
-    }
 
     @BeforeEach
     void beforeEach() {

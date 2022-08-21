@@ -1,4 +1,4 @@
-package mock;
+package mock.i18n;
 
 import mock.entity.Country;
 import mock.entity.Location;
@@ -14,16 +14,6 @@ import java.util.stream.Stream;
 public class LocalizationServiceImplTest {
 
     static LocalizationServiceImpl localizationServiceImpl;
-
-    @BeforeAll
-    static void beforeAll() {
-        System.out.println("@BeforeAll started");
-    }
-
-    @AfterAll
-    static void afterAll() {
-        System.out.println("AfterAll started");
-    }
 
     @BeforeEach
     void beforeEach() {
