@@ -3,11 +3,16 @@
 
 # User-specific stuff
 .idea/**/workspace.xml
+.idea/**/vcs.xml
+.idea/**/uiDesigner.xml
+.idea/**/runConfigurations.xml
+.idea/**/misc.xml
+.idea/**/jarRepositories.xml
+.idea/**/compiler.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-.idea/
 
 # AWS User-specific
 .idea/**/aws.xml
@@ -21,7 +26,7 @@
 .idea/**/dataSources.local.xml
 .idea/**/sqlDataSources.xml
 .idea/**/dynamic.xml
-.idea/**/uiDesigner.xml
+.idea/uiDesigner.xml
 .idea/**/dbnavigator.xml
 
 # Gradle
