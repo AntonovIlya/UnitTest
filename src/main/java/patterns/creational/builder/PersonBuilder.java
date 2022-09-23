@@ -4,7 +4,7 @@ public class PersonBuilder {
 
     private String name;
     private String surname;
-    private int age;
+    private int age = -1;
     private String city;
 
     public PersonBuilder() {
@@ -21,7 +21,7 @@ public class PersonBuilder {
     }
 
     public PersonBuilder setAge(int age) throws IllegalAccessException {
-        if (age <= 0) throw new IllegalAccessException("Указан неверный возраст");
+        if (age < 0) throw new IllegalAccessException("Указан неверный возраст");
         if (this.age == 0) this.age = age;
         return this;
     }
@@ -32,7 +32,7 @@ public class PersonBuilder {
     }
 
     public Person build() throws IllegalAccessException {
-        if (name == null || surname == null || age == 0)
+        if (name == null || surname == null || age == -1)
             throw new IllegalAccessException("Не хватает обязательных полей");
         Person person = new Person(name, surname, age);
         person.setAddress(city);
