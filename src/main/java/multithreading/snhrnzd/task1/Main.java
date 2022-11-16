@@ -1,18 +1,17 @@
 package multithreading.snhrnzd.task1;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Main {
 
-    public static int QUANTITY = 10;
+    private static final int NUMBER_OF_BUYERS = 10;
 
-    public static List<String> list = new ArrayList<>(Main.QUANTITY);
+    public static void main(String[] args) {
 
-    public static void main(String[] args) throws InterruptedException {
-        Dealer dealer = new Dealer();
-        Bayer bayer = new Bayer();
-        dealer.start();
-        bayer.start();
+        Showroom showroom = new Showroom();
+        Bayer bayer = new Bayer(showroom);
+        Dealer dealer = new Dealer(showroom);
+        new Thread(dealer, "Dealer").start();
+        for (int i = 0; i < NUMBER_OF_BUYERS; i++) {
+            new Thread(bayer, "Bayer " + i).start();
+        }
     }
 }
