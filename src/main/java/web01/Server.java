@@ -1,22 +1,19 @@
 package web01;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ServerSocket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.Map;
+import java.util.concurrent.*;
 
 public class Server {
-    private final List<String> validPaths = List.of("/index.html");
+
     private static final int NUMBER_OF_THREADS = 64;
     private final ExecutorService threadPool = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+    private final Map<Integer, Handler> handlers = new ConcurrentHashMap<>();
+
+    public Server() {
+        addDefaultHandler();
+    }
 
     public void listen(int port) {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
@@ -24,12 +21,10 @@ public class Server {
                 try (final var socket = serverSocket.accept();
                      final var in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                      final var out = new BufferedOutputStream(socket.getOutputStream())) {
-
-
-                    Runnable muRunnable = () -> processing(in, out);
+                    Request request = new Request(in);
+                    Runnable muRunnable = () -> processing(request, out);
                     final Future<?> task = threadPool.submit(muRunnable);
                     task.get();
-
                 } catch (ExecutionException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -39,38 +34,35 @@ public class Server {
         }
     }
 
-    public void processing(BufferedReader in, BufferedOutputStream out) {
-        try {
-            final var requestLine = in.readLine();
-            final var parts = requestLine.split(" ");
+    public void processing(Request request, BufferedOutputStream out) {
+        Handler handler = handlers.get(getHashCode(request.getRequestMethod(), request.getRequestedURL()));
+        if (handler != null) {
+            handler.handle(request, out);
+        } else {
+            handlers.get("default".hashCode()).handle(request, out);
+        }
+    }
 
-            if (parts.length != 3) return;
-            final var path = parts[1];
+    public void addHandler(String method, String path, Handler handler) {
+        handlers.put(getHashCode(method, path), handler);
+    }
 
-            if (!validPaths.contains(path)) {
+    private int getHashCode(String a, String b) {
+        return (a + b).hashCode();
+    }
+
+    private void addDefaultHandler() {
+        handlers.put("default".hashCode(),(request, out) -> {
+            try {
                 out.write((
                         "HTTP/1.1 404 Not Found\r\n" +
                                 "Content-Length: 0\r\n" +
                                 "Connection: close\r\n" +
                                 "\r\n").getBytes());
                 out.flush();
-                return;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-
-            final var filePath = Path.of(".", "public", path);
-            final var mimeType = Files.probeContentType(filePath);
-            final var length = Files.size(filePath);
-            out.write((
-                    "HTTP/1.1 200 OK\r\n" +
-                            "Content-Type: " + mimeType + "\r\n" +
-                            "Content-Length: " + length + "\r\n" +
-                            "Connection: close\r\n" +
-                            "\r\n").getBytes());
-            Files.copy(filePath, out);
-            out.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        });
     }
 }
