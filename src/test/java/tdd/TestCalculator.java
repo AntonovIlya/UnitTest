@@ -1,6 +1,5 @@
 package tdd;
 
-import tdd.Calculator;
 import org.junit.jupiter.api.*;
 
 import java.util.Random;
