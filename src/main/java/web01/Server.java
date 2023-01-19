@@ -2,6 +2,7 @@ package web01;
 
 import java.io.*;
 import java.net.ServerSocket;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.*;
 
@@ -25,7 +26,7 @@ public class Server {
                     Runnable muRunnable = () -> processing(request, out);
                     final Future<?> task = threadPool.submit(muRunnable);
                     task.get();
-                } catch (ExecutionException | InterruptedException e) {
+                } catch (ExecutionException | InterruptedException | URISyntaxException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -35,7 +36,7 @@ public class Server {
     }
 
     public void processing(Request request, BufferedOutputStream out) {
-        Handler handler = handlers.get(getHashCode(request.getRequestMethod(), request.getRequestedURL()));
+        Handler handler = handlers.get(getHashCode(request.getRequestMethod(), request.getPath()));
         if (handler != null) {
             handler.handle(request, out);
         } else {
