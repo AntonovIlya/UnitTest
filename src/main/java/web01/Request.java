@@ -1,11 +1,17 @@
 package web01;
 
+
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
+
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +25,7 @@ public class Request {
     private String protocolVersion;
     private final Map<String, String> bodyHeaders = new HashMap<>();
     private final StringBuilder messageBody = new StringBuilder();
+    private final Map<String, List<String>> postParams = new HashMap<>();
     private final BufferedReader data;
     private final List<Integer> listOfCodes = new ArrayList<>();
 
@@ -78,6 +85,31 @@ public class Request {
         return messageBody.toString();
     }
 
+
+    public String getPath() {
+        return builder.getPath();
+    }
+
+    public List<String> getPostParam(String name) {
+        return postParams.get(name);
+    }
+
+    public Map<String, List<String>> getPostParams() {
+        if (!(bodyHeaders.containsKey("Content-Type") && bodyHeaders.get("Content-Type").equals("application/x-www-form-urlencoded"))) return postParams;
+        String[] pairs = messageBody.toString().split("&");
+        for (String s : pairs) {
+            String[] nameValue = s.split("=");
+            String value = URLDecoder.decode(nameValue[1], StandardCharsets.UTF_8);
+            String name = nameValue[0];
+            if (postParams.containsKey(name)) {
+                postParams.get(name).add(value);
+                continue;
+            }
+            List<String> list = new ArrayList<>();
+            list.add(value);
+            postParams.put(name, list);
+        }
+        return postParams;
     public String getQueryParam(String name) {
         for (NameValuePair nameValuePair : getQueryParams()) {
             if (nameValuePair.getName().equals(name)) return nameValuePair.getValue();
@@ -87,10 +119,6 @@ public class Request {
 
     public List<NameValuePair> getQueryParams() {
         return builder.getQueryParams();
-    }
-
-    public String getPath() {
-        return builder.getPath();
     }
 
     public String getFragment() {
