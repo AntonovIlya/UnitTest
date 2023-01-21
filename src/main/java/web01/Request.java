@@ -1,15 +1,10 @@
 package web01;
 
-
-import org.apache.http.client.utils.URIBuilder;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.URIBuilder;
-
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -95,7 +90,8 @@ public class Request {
     }
 
     public Map<String, List<String>> getPostParams() {
-        if (!(bodyHeaders.containsKey("Content-Type") && bodyHeaders.get("Content-Type").equals("application/x-www-form-urlencoded"))) return postParams;
+        if (!(bodyHeaders.containsKey("Content-Type") && bodyHeaders.get("Content-Type").equals("application/x-www-form-urlencoded")))
+            return postParams;
         String[] pairs = messageBody.toString().split("&");
         for (String s : pairs) {
             String[] nameValue = s.split("=");
@@ -110,6 +106,8 @@ public class Request {
             postParams.put(name, list);
         }
         return postParams;
+    }
+
     public String getQueryParam(String name) {
         for (NameValuePair nameValuePair : getQueryParams()) {
             if (nameValuePair.getName().equals(name)) return nameValuePair.getValue();
