@@ -1,10 +1,15 @@
 package web01;
 
+
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.net.URIBuilder;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
+
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -80,6 +85,7 @@ public class Request {
         return messageBody.toString();
     }
 
+
     public String getPath() {
         return builder.getPath();
     }
@@ -104,5 +110,18 @@ public class Request {
             postParams.put(name, list);
         }
         return postParams;
+    public String getQueryParam(String name) {
+        for (NameValuePair nameValuePair : getQueryParams()) {
+            if (nameValuePair.getName().equals(name)) return nameValuePair.getValue();
+        }
+        return null;
+    }
+
+    public List<NameValuePair> getQueryParams() {
+        return builder.getQueryParams();
+    }
+
+    public String getFragment() {
+        return builder.getFragment();
     }
 }
